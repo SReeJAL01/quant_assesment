@@ -1,7 +1,5 @@
 ﻿# klyptonTask
 
-# NIFTY 5-Minute Quantitative Trading Project
-
 ## Project Overview
 This project implements a full-scale quantitative trading pipeline for NIFTY 50, including **data acquisition, feature engineering, regime detection, EMA-based trading strategies, ML-enhanced trade prediction, and high-performance trade analysis**. The objective is to generate trading signals, backtest strategies, and extract actionable insights using both technical indicators and options-based features.
 
@@ -100,3 +98,4 @@ Quant_Assignment/
 - Most outliers occur in downtrend regime (-1).
 - Outlier trades concentrated at market open hours.
 - Average PnL of outliers significantly higher than normal profitable trades.
+
