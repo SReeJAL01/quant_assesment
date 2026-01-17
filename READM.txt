@@ -1,0 +1,100 @@
+# NIFTY 5-Minute Quantitative Trading Project
+
+## Project Overview
+This project implements a full-scale quantitative trading pipeline for NIFTY 50, including **data acquisition, feature engineering, regime detection, EMA-based trading strategies, ML-enhanced trade prediction, and high-performance trade analysis**. The objective is to generate trading signals, backtest strategies, and extract actionable insights using both technical indicators and options-based features.
+
+Key components:
+- Fetch 5-minute interval OHLCV data for NIFTY Spot, Futures, and Options.
+- Clean, merge, and process the data.
+- Compute technical indicators (EMA) and options Greeks (Delta, Gamma, Vega, Theta, Rho).
+- Identify market regimes using Hidden Markov Models.
+- Implement EMA cross strategy with regime filters.
+- Train ML models (XGBoost, LSTM) for trade prediction.
+- Analyze high-performing trades, detect outliers, and summarize actionable insights.
+
+---
+
+## Installation Instructions
+
+### Requirements
+- Python 3.11+
+- Packages:
+```bash
+pip install pandas numpy matplotlib seaborn scipy hmmlearn xgboost tensorflow mibian
+
+
+## How to Run
+
+### Data Cleaning & Merging
+- python part1/data_clean_merge.py
+
+### Feature Engineering
+- python part2/feature_engineering.py
+
+### Regime Detection (HMM)
+- python part3/task_3_hmm.py
+
+### EMA Backtest Strategy
+- python part4/ema_backtest.py
+
+### ML-Enhanced Backtesting
+- python part5/mle.py
+
+### High-Performance Trade Analysis
+- python part6/high_perf_analysis.py
+
+Outputs are saved as CSVs and plots for visualization.
+
+## Project Structure
+
+Quant_Assignment/
+│
+├─ part1/                # Data cleaning and merging
+│   └─ data_clean_merge.py
+│
+├─ part2/                # Feature engineering
+│   └─ feature_engineering.py
+│
+├─ part3/                # Hidden Markov Model for regime detection
+│   └─ task_3_hmm.py
+│
+├─ part4/                # EMA trading strategy backtesting
+│   └─ ema_backtest.py
+│
+├─ part5/                # Machine learning enhancements (XGBoost & LSTM)
+│   └─ mle.py
+│
+├─ part6/                # High-performance trade analysis
+│   └─ high_perf_analysis.py
+│
+├─ data/                 # Input CSVs and merged datasets
+│   ├─ nifty_spot_5min.csv
+│   ├─ nifty_futures_5min.csv
+│   ├─ nifty_options_5min.csv
+│   └─ nifty_merged_5min.csv
+│
+└─ outputs/              # Backtest results, feature datasets, and plots
+
+
+## Key Results Summary
+
+### EMA Backtest Strategy
+
+- Total trades: ~1,398
+- Win rate: ~51%
+- Average trade duration: 2–4 candles
+- Max drawdown: 1–2%
+
+### ML-Enhanced Backtesting
+
+- XGBoost and LSTM models improved trade filtering.
+- Only trades predicted as profitable by ML were executed.
+- Increased average PnL per trade while slightly reducing total trades.
+
+### High-Performance Trade Analysis
+- Outliers beyond 3-sigma identified (~1–2% of trades).
+
+#### Key patterns:
+- Most outliers occur in downtrend regime (-1).
+- Outlier trades concentrated at market open hours.
+- Average PnL of outliers significantly higher than normal profitable trades.

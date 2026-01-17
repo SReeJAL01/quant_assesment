@@ -1,0 +1,120 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import zscore, ttest_ind
+
+# ===============================
+# LOAD BACKTEST DATA
+# ===============================
+df = pd.read_csv(r"C:\Users\SReeJAL\OneDrive\Desktop\Quant_Assignment\part 5\nifty_ml_enhanced_backtest.csv")
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+df.set_index('timestamp', inplace=True)
+
+# ===============================
+# CALCULATE TRADE PnL
+# ===============================
+# Example: XGBoost strategy
+df['strategy_return_xgb'] = df['position_xgb'].shift(1) * df['return']
+
+# ===============================
+# 6.1 OUTLIER DETECTION
+# ===============================
+df_profitable = df[df['strategy_return_xgb'] > 0].copy()
+df_profitable['z_score'] = zscore(df_profitable['strategy_return_xgb'])
+
+df_outliers = df_profitable[df_profitable['z_score'] > 3]
+df_normal   = df_profitable[df_profitable['z_score'] <= 3]
+
+print(f"Total profitable trades: {len(df_profitable)}")
+print(f"Outlier trades (>3 sigma): {len(df_outliers)} ({len(df_outliers)/len(df_profitable)*100:.2f}%)")
+
+# ===============================
+# 6.2 FEATURE ANALYSIS
+# ===============================
+features_to_analyze = [
+    'regime', 'Average_IV', 'Futures_Basis', 'EMA_5', 'EMA_15', 
+    'PCR_OI', 'Gamma_Exposure', 'Vega', 'spot_return'
+]
+
+# Boxplots with safety check for small groups
+for feat in features_to_analyze:
+    if len(df_outliers[feat].dropna()) < 2:
+        print(f"Skipping boxplot for {feat} (not enough outlier points)")
+        continue
+
+    plt.figure(figsize=(8,4))
+    sns.boxplot(
+        x='z_score', 
+        y=feat, 
+        data=pd.concat([
+            df_outliers.assign(z_score='Outlier'), 
+            df_normal.assign(z_score='Normal')
+        ])
+    )
+    plt.title(f"{feat} distribution: Outlier vs Normal Profitable Trades")
+    plt.show()
+
+# Scatter plot: PnL vs Trade Duration (if trade_duration exists)
+if 'trade_duration' in df.columns and len(df_outliers) > 0:
+    plt.figure(figsize=(8,5))
+    sns.scatterplot(
+        x='trade_duration', y='strategy_return_xgb', data=df_profitable, alpha=0.5
+    )
+    plt.scatter(
+        df_outliers['trade_duration'], df_outliers['strategy_return_xgb'], color='red', label='Outliers'
+    )
+    plt.xlabel("Trade Duration (bars)")
+    plt.ylabel("Trade PnL")
+    plt.title("Trade PnL vs Duration")
+    plt.legend()
+    plt.show()
+
+# Correlation heatmap for profitable trades (skip if too few rows)
+if len(df_profitable) > 1:
+    plt.figure(figsize=(10,8))
+    sns.heatmap(
+        df_profitable[features_to_analyze + ['strategy_return_xgb']].corr(), 
+        annot=True, cmap='coolwarm'
+    )
+    plt.title("Correlation Heatmap: Profitable Trades")
+    plt.show()
+
+# Time-of-day distribution of outliers
+if len(df_outliers) > 0:
+    df_outliers['hour'] = df_outliers.index.hour
+    plt.figure(figsize=(8,4))
+    sns.histplot(df_outliers['hour'], bins=24, kde=False)
+    plt.title("Outlier Trades Distribution by Hour")
+    plt.xlabel("Hour of Day")
+    plt.ylabel("Number of Trades")
+    plt.show()
+
+# ===============================
+# 6.3 STATISTICAL COMPARISON
+# ===============================
+print("===== Statistical Comparison (Outliers vs Normal Profitable Trades) =====")
+for feat in features_to_analyze:
+    if len(df_outliers[feat].dropna()) < 2:
+        print(f"Skipping t-test for {feat} (not enough outlier points)")
+        continue
+    t_stat, p_val = ttest_ind(df_outliers[feat], df_normal[feat], equal_var=False)
+    print(f"{feat}: t-stat={t_stat:.3f}, p-value={p_val:.3f}")
+
+# ===============================
+# 6.3 INSIGHTS SUMMARY
+# ===============================
+avg_pnl_outlier = df_outliers['strategy_return_xgb'].mean() if len(df_outliers) > 0 else np.nan
+avg_pnl_normal  = df_normal['strategy_return_xgb'].mean() if len(df_normal) > 0 else np.nan
+
+print("\n===== Insights Summary =====")
+print(f"Percentage of outlier trades: {len(df_outliers)/len(df_profitable)*100:.2f}%")
+print(f"Average PnL - Outliers: {avg_pnl_outlier:.4f}")
+print(f"Average PnL - Normal Profitable: {avg_pnl_normal:.4f}")
+
+if len(df_outliers) > 0:
+    print("Regime patterns in outliers:\n", df_outliers['regime'].value_counts(normalize=True))
+    print("Time-of-day patterns in outliers:\n", df_outliers['hour'].value_counts(normalize=True))
+    print("Average IV for outliers:", df_outliers['Average_IV'].mean())
+else:
+    print("No outlier trades to analyze further.")

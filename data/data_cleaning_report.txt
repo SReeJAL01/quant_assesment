@@ -1,0 +1,10 @@
+DATA CLEANING REPORT
+====================
+
+• Timestamp normalized from 'date'
+• Missing values handled via forward fill
+• Outliers removed using IQR method
+• Futures treated as continuous proxy (expiry data unavailable)
+• ATM strike computed dynamically using spot close
+• Options filtered to ATM ±1 ±2 strikes
+• All datasets aligned on 5-minute timestamps
