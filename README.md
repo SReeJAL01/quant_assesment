@@ -1,82 +1,107 @@
-﻿# klyptonTask
+# NIFTY 5-Minute Quantitative Trading Pipeline
 
-## Project Overview
-This project implements a full-scale quantitative trading pipeline for NIFTY 50, including **data acquisition, feature engineering, regime detection, EMA-based trading strategies, ML-enhanced trade prediction, and high-performance trade analysis**. The objective is to generate trading signals, backtest strategies, and extract actionable insights using both technical indicators and options-based features.
+[![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)](https://github.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-Key components:
-- Fetch 5-minute interval OHLCV data for NIFTY Spot, Futures, and Options.
-- Clean, merge, and process the data.
-- Compute technical indicators (EMA) and options Greeks (Delta, Gamma, Vega, Theta, Rho).
-- Identify market regimes using Hidden Markov Models.
-- Implement EMA cross strategy with regime filters.
-- Train ML models (XGBoost, LSTM) for trade prediction.
-- Analyze high-performing trades, detect outliers, and summarize actionable insights.
+A comprehensive quantitative trading framework designed for the **NIFTY 50** index. This project implements an end-to-end pipeline covering data acquisition, advanced feature engineering, regime detection via Hidden Markov Models (HMM), EMA-based algorithmic strategies, and Machine Learning (XGBoost/LSTM) for signal enhancement.
 
 ---
 
-## Installation Instructions
+## 📖 Table of Contents
+* 🔭 Project Overview
+* 🚀 Key Features
+* 📂 Project Structure
+* 🗒️Installation Instructions
+* ❔How to Run
+* 🔑 Key Results Summary
+
+---
+
+## 🔭 Project Overview
+
+The objective of this project is to generate high-quality trading signals, backtest robust strategies, and extract actionable insights using a hybrid approach of technical indicators and options-based features.
+
+### Core Workflow
+1.  **Data Ingestion:** Fetch and process 5-minute OHLCV data for NIFTY Spot, Futures, and Options.
+2.  **Feature Engineering:** Compute technical indicators (EMAs) and financial metrics (Options Greeks: Delta, Gamma, Vega, Theta, Rho).
+3.  **Market Regime Detection:** Utilize Hidden Markov Models (HMM) to classify market states (e.g., Trending vs. Ranging).
+4.  **Strategy Implementation:** Execute EMA crossover strategies filtered by market regimes.
+5.  **ML Enhancement:** Train XGBoost and LSTM models to validate and filter trade signals.
+6.  **Performance Analysis:** Deep dive into high-performing trades and outlier detection.
+
+---
+
+## 🚀 Key Features
+
+* **Multi-Asset Data Processing:** Seamlessly cleans and merges Spot, Futures, and Options data.
+* **Advanced Greeks Calculation:** Uses `mibian` to calculate real-time Options Greeks.
+* **Regime-Based Filtering:** Dynamically adjusts strategy behavior based on HMM-detected market volatility.
+* **Hybrid ML Models:** Combines traditional technical analysis with modern ML classifiers (XGBoost) and sequence models (LSTM).
+* **Statistical Analysis:** Automated detection of 3-sigma outliers to identify high-impact market events.
+---
+
+
+## 📂 Project Structure
+
+```bash
+├── data/
+│   └── All raw and processed CSV files
+│
+├── notebooks/
+│   ├── main.py
+│   ├── data_clean_merge.py
+│   ├── feature_engineering.py
+│   ├── regime_detection.py
+│   ├── ema_backtest.py
+│   └── mle.py
+│
+├── results/
+│   └── Strategy performance metrics and analysis outputs
+│
+├── plots/
+│   └── All generated visualizations and charts
+│
+└── README.md
+```
+---
+
+## 🗒️ Installation Instructions
 
 ### Requirements
-- Python 3.11+
+- Python 3.9+
 - Packages:
-```bash
+```python
 pip install pandas numpy matplotlib seaborn scipy hmmlearn xgboost tensorflow mibian
+```
+ 
+---
 
 
-## How to Run
+## ❔ How to Run
 
 ### Data Cleaning & Merging
-- python part1/data_clean_merge.py
+- data/notebooks/main.py
+- data/notebooks/data_clean_merge.py
 
 ### Feature Engineering
-- python part2/feature_engineering.py
+- data/notebooks/feature_engineering.py
 
 ### Regime Detection (HMM)
-- python part3/task_3_hmm.py
+- data/notebooks/regime_detection.py
 
 ### EMA Backtest Strategy
-- python part4/ema_backtest.py
+- data/notebooks/ema_backtest.py
 
 ### ML-Enhanced Backtesting
-- python part5/mle.py
+- data/notebooks/mle.py
 
 ### High-Performance Trade Analysis
-- python part6/high_perf_analysis.py
+- Outputs are saved as CSVs and plots for visualization.
 
-Outputs are saved as CSVs and plots for visualization.
+---
 
-## Project Structure
-
-Quant_Assignment/
-│
-├─ part1/                # Data cleaning and merging
-│   └─ data_clean_merge.py
-│
-├─ part2/                # Feature engineering
-│   └─ feature_engineering.py
-│
-├─ part3/                # Hidden Markov Model for regime detection
-│   └─ task_3_hmm.py
-│
-├─ part4/                # EMA trading strategy backtesting
-│   └─ ema_backtest.py
-│
-├─ part5/                # Machine learning enhancements (XGBoost & LSTM)
-│   └─ mle.py
-│
-├─ part6/                # High-performance trade analysis
-│   └─ high_perf_analysis.py
-│
-├─ data/                 # Input CSVs and merged datasets
-│   ├─ nifty_spot_5min.csv
-│   ├─ nifty_futures_5min.csv
-│   ├─ nifty_options_5min.csv
-│   └─ nifty_merged_5min.csv
-│
-└─ outputs/              # Backtest results, feature datasets, and plots
-
-
-## Key Results Summary
+## 🔑 Key Results Summary
 
 ### EMA Backtest Strategy
 
@@ -98,4 +123,3 @@ Quant_Assignment/
 - Most outliers occur in downtrend regime (-1).
 - Outlier trades concentrated at market open hours.
 - Average PnL of outliers significantly higher than normal profitable trades.
-
